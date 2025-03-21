@@ -13,7 +13,7 @@ class RealTimeTTS:
         self.speaker_embedding = torch.tensor(self.embeddings_dataset[1000]["xvector"]).unsqueeze(0)
 
 
-        # Load Mistral model and tokenizer
+        # Load model and tokenizer
         quantization_config = BitsAndBytesConfig(load_in_4bit=True)
         self.tokenizer = AutoTokenizer.from_pretrained(llm_model)
         self.model = AutoModelForCausalLM.from_pretrained(
