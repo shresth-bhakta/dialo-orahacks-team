@@ -1,2 +1,7 @@
 #ignore virtual python env
 myenv
+
+#ignore audio files
+speech.wav
+
+
