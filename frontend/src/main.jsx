@@ -31,7 +31,7 @@ const HomePage = () => {
   return (
     <div className="home-page">
       <header>
-        <img src="welcome.jpg" alt="Welcome Logo" className="logo" />
+        <img src="frontend/src/assets/dialologo.png" alt="Welcome Logo" className="logo" />
         <h1>Welcome to Dialo</h1>
       </header>
       <section className="bots-section">
@@ -55,14 +55,14 @@ const HomePage = () => {
         <div className="team-info">
           <h3>Team Members:</h3>
           <ul>
-            <li>John Doe</li>
-            <li>Jane Smith</li>
-            <li>Bob Johnson</li>
+            <li>Abhay Kumar</li>
+            <li>Rakshith</li>
+            <li>Shresth Bhakta</li>
           </ul>
         </div>
         <div className="team-name">
           <h3>Team Name:</h3>
-          <p>Dialo Team</p>
+          <p>Dialo </p>
         </div>
         <div className="contact-us">
           <h3>Contact Us:</h3>
