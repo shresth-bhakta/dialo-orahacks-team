@@ -72,3 +72,43 @@ body {
     grid-template-columns: 100%;
   }
 }
+.home-page {
+  max-width: 1200px;
+  margin: 40px auto;
+  text-align: center;
+
+  h1 {
+    font-size: 36px;
+    margin-bottom: 20px;
+  }
+}
+
+.page-boxes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.box {
+  width: calc(33.33% - 20px);
+  margin: 10px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #f7f7f7;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #eee;
+  }
+
+  h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+
+  p {
+    font-size: 18px;
+    color: #666;
+  }
+}
