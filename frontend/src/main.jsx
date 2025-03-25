@@ -30,29 +30,49 @@ import './index.scss';
 const HomePage = () => {
   return (
     <div className="home-page">
-      <h1>Welcome to Dialo</h1>
-      <div className="page-boxes">
-        <Link to="/about" className="box">
-          <h2>About Us</h2>
-          <p>Learn more about our company</p>
-        </Link>
-        <Link to="/services" className="box">
-          <h2>Our Services</h2>
-          <p>Discover what we offer</p>
-        </Link>
-        <Link to="/contact" className="box">
-          <h2>Contact Us</h2>
-          <p>Get in touch with us</p>
-        </Link>
-        <Link to="/blog" className="box">
-          <h2>Blog</h2>
-          <p>Read our latest articles</p>
-        </Link>
-        <Link to="/faq" className="box">
-          <h2>Frequently Asked Questions</h2>
-          <p>Find answers to common questions</p>
-        </Link>
-      </div>
+      <header>
+        <img src="welcome.jpg" alt="Welcome Logo" className="logo" />
+        <h1>Welcome to Dialo</h1>
+      </header>
+      <section className="bots-section">
+        <h2>Different Bots:</h2>
+        <div className="bot-boxes">
+          <Link to="/bot1" className="box">
+            <h3>Bot 1</h3>
+            <p>Go to Bot 1</p>
+          </Link>
+          <Link to="/bot2" className="box">
+            <h3>Bot 2</h3>
+            <p>Go to Bot 2</p>
+          </Link>
+          <Link to="/bot3" className="box">
+            <h3>Bot 3</h3>
+            <p>Go to Bot 3</p>
+          </Link>
+        </div>
+      </section>
+      <footer className="footer">
+        <div className="team-info">
+          <h3>Team Members:</h3>
+          <ul>
+            <li>John Doe</li>
+            <li>Jane Smith</li>
+            <li>Bob Johnson</li>
+          </ul>
+        </div>
+        <div className="team-name">
+          <h3>Team Name:</h3>
+          <p>Dialo Team</p>
+        </div>
+        <div className="contact-us">
+          <h3>Contact Us:</h3>
+          <p>Email: [info@dialo.com](mailto:info@dialo.com)</p>
+          <p>Phone: +1-123-456-7890</p>
+        </div>
+        <div className="copyright">
+          <p>&copy; 2024 Dialo Team. All rights reserved.</p>
+        </div>
+      </footer>
     </div>
   );
 };
