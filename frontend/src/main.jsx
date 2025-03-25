@@ -30,7 +30,7 @@ import './index.scss';
 const HomePage = () => {
   return (
     <div className="home-page">
-      <h1>Welcome to Our Website</h1>
+      <h1>Welcome to Dialo</h1>
       <div className="page-boxes">
         <Link to="/about" className="box">
           <h2>About Us</h2>
