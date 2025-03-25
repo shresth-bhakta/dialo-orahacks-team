@@ -81,4 +81,4 @@ class RealTimeTTS:
 
 # Example Usage
 tts_system = RealTimeTTS()
-tts_system.run_real_time_tts("How to cook maggi ,limit your answer in 100 words", "speech.wav")
+tts_system.run_real_time_tts("What are the advantages of doing yoga daily,limit your answer in 90 words", "speech.wav")
