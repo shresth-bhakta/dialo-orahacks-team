@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useState } from "react";
 import { Menu } from "./components";
 import { Routes, Route } from "react-router-dom";
-import { Error, Forgot, Login, Main, Signup} from "./page";
+import { Error, Forgot, HomePage, Login, Main, Signup} from "./page";
 import { useSelector } from "react-redux";
 import ProtectedRoute from "./protected";
 import Loading from "./components/loading/loading";
@@ -69,7 +69,9 @@ const App = () => {
           <Route path="/chat/:id" element={<Main />} />
         </Route>
 
-        <Route path ="/demo" element={<Main />}></Route>
+        <Route path ="/bot1" element={<Main />}></Route>
+        <Route path ="/home" element={<HomePage />}></Route>
+
 
         <Route element={<ProtectedRoute offline={offline} />}>
           <Route path="/login" element={<Login />} />
