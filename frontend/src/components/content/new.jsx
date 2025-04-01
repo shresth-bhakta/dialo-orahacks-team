@@ -10,9 +10,63 @@ const New = memo(() => {
   const [audioData, setAudioData] = useState([])
   const [isPanelOpen, setIsPanelOpen] = useState(false)
   const [transcribedText, setTranscribedText] = useState([])
+  const [isAsking, setIsAsking] = useState(false);
+  const [conversation, setConversation] = useState([]);
   const audioContextRef = useRef(null)
   const analyserRef = useRef(null)
   const animationFrameRef = useRef(null)
+  const audioRef = useRef(null);
+
+  const hardcodedConversation = [
+    { speaker: "Customer", text: "Hello, where is my order?" },
+    { speaker: "Dialo", text: "Hello! I understand the urgency. Could you please provide your order number?" },
+    { speaker: "Customer", text: "Order no. 245678" },
+    { speaker: "Dialo", text: `Thank you! Let me check...
+  Your order #245678 contains:
+  📦 Item: Wireless Earbuds
+  🚚 Current Status: In transit
+  📍 Last Location: Dungo Logistics Hub
+  ⏳ Estimated Delivery: Within the next 3 hours
+  Could you please confirm if this is the correct order?` },
+    { speaker: "Customer", text: "Yes" },
+    { speaker: "Dialo", text: `Great! Your order has reached the Dungo Logistics Hub and will be delivered to your address within a few hours. 🚀
+  Is there anything else I can assist you with?` },
+    { speaker: "Customer", text: "Thank you so much, Dialo!" },
+    { speaker: "Dialo", text: "You're very welcome! 😊 If you need any further assistance, feel free to ask. Have a great day!" },
+  ];
+
+  const playResponse = (response) => {
+    const utterance = new SpeechSynthesisUtterance(response);
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const handleAskQuestion = () => {
+    setIsAsking(true);
+    setIsRecording(true);
+
+    const nextIndex = conversation.length;
+    if (nextIndex < hardcodedConversation.length) {
+      const nextEntry = hardcodedConversation[nextIndex];
+      setTimeout(() => {
+        setConversation((prev) => [...prev, nextEntry]);
+        if (nextEntry.speaker === "Dialo") {
+          playResponse(nextEntry.text);
+        }
+        setIsRecording(false);
+        setIsAsking(false);
+      }, 3000);
+    }
+  };
+
+  const handleStopAsking = () => {
+    setIsAsking(false);
+    setIsRecording(false);
+  };
+
+  const handleEndConversation = () => {
+    setIsRecording(false);
+    setIsAsking(false);
+  };
 
   const startRecording = () => {
     setIsRecording(true)
@@ -74,7 +128,16 @@ const New = memo(() => {
             ))}
           </div>
           <div className="audio-controls">
-            <button onClick={stopRecording} className="end">
+            {!isAsking ? (
+              <button onClick={handleAskQuestion} className="ask">
+                Ask Question
+              </button>
+            ) : (
+              <button onClick={handleStopAsking} className="stop">
+                Stop Asking
+              </button>
+            )}
+            <button onClick={handleEndConversation} className="end">
               End
             </button>
           </div>
@@ -154,8 +217,10 @@ const New = memo(() => {
         </button>
         {isPanelOpen && (
           <div className="panel-content">
-            {transcribedText.map((text, index) => (
-              <p key={index} className="chat-message">{text}</p>
+            {conversation.map((entry, index) => (
+              <p key={index} className={`chat-message ${entry.speaker.toLowerCase()}`}>
+                <strong>{entry.speaker}:</strong> {entry.text}
+              </p>
             ))}
           </div>
         )}
