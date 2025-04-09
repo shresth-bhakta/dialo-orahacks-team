@@ -2,7 +2,6 @@
   "name": "client",
   "private": true,
   "version": "1.0.0",
-  "author": "anson benny",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,9 +9,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@react-oauth/google": "^0.9.0",
+    "@react-oauth/google": "^0.12.1",
     "@reduxjs/toolkit": "^1.9.3",
-    "axios": "^1.3.4",
+    "axios": "^1.8.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.5",

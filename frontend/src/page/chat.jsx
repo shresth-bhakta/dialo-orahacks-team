@@ -261,12 +261,10 @@ const InputArea = ({ status, chatRef, stateAction }) => {
       <div className="text">
         <a
           target="_blank"
-          href="https://help.openai.com/en/articles/6825453-chatgpt-release-notes"
         >
-          ChatGPT Mar 14 Version.
+          Dialo Version 1.
         </a>{" "}
-        Free Research Preview. Our goal is to make AI systems more natural and
-        safe to interact with. Your feedback will help us improve.
+        First version of Dialo. Your feedback will help us improve.
       </div>
     </div>
   );
