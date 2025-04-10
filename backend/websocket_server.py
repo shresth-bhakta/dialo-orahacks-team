@@ -15,7 +15,7 @@ app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 # Load Whisper model for STT
-stt_model = whisper.load_model("base")
+stt_model = whisper.load_model("tiny.en")
 
 # Function to record audio until silence is detected
 def record_until_silence(samplerate=16000, silence_duration=1.5, max_duration=15):
@@ -55,30 +55,47 @@ def save_wav(filename, audio_data, samplerate=16000):
 def handle_speech(data):
     print("received websocket connection")
     audio_data = record_until_silence()
+    print(f"Audio data length: {len(audio_data)}")
+
 
     # Save audio to temp file
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as temp_audio:
+    # with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as temp_audio:
+    #     save_wav(temp_audio.name, audio_data)
+    #     temp_filename = temp_audio.name
+    #     print(f"Temporary audio file created: {temp_filename}")
+
+    temp_dir = tempfile.gettempdir()
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".wav", dir=temp_dir) as temp_audio:
         save_wav(temp_audio.name, audio_data)
         temp_filename = temp_audio.name
 
-    # Convert speech to text
-    result = stt_model.transcribe(temp_filename)
-    os.remove(temp_filename)  # Cleanup
-    transcription = result["text"]
+    try:
+        # Convert speech to text
+        # temp_filename="sample_audio.wav"
+        print(os.path.exists(temp_filename))
+        print(os.listdir())
+        result = stt_model.transcribe(temp_filename)
+# result = stt_model.transcribe(audio_data)
+    # os.remove(temp_filename)  # Cleanup
+        transcription = result["text"]
 
-    # Emit full transcribed text back to client
-    emit("transcription", {"text": transcription})
+        # Emit full transcribed text back to client
+        emit("transcription", {"text": transcription})
 
-    # *** FIX: Only send final query to LLM once user stops speaking ***
-    if transcription.strip():
-        llm_response = ollama.chat(model="llama3.2", messages=[{"role": "user", "content": transcription}])
-        response_text = llm_response["message"]["content"]
+        # Send final query to LLM once user stops speaking
+        if transcription.strip():
+            llm_response = ollama.chat(model="llama3.2", messages=[{"role": "user", "content": transcription}])
+            response_text = llm_response["message"]["content"]
 
-        # Emit LLM response
-        emit("llm_response", {"response": response_text})
+            # Emit LLM response
+            emit("llm_response", {"response": response_text})
 
-        # Convert LLM response to speech
-        asyncio.run(text_to_speech(response_text))
+            # Convert LLM response to speech
+            asyncio.run(text_to_speech(response_text))
+    finally:
+        # Ensure the temporary file is deleted
+        if os.path.exists(temp_filename):
+            os.remove(temp_filename)
 
 # Convert text to speech
 async def text_to_speech(text):

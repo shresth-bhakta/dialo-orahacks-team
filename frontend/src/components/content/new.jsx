@@ -1,51 +1,76 @@
-import React, { memo, useState, useRef } from 'react'
-import { useDispatch } from 'react-redux'
-import { Sun, Thunder, Warning } from '../../assets'
-import { livePrompt } from '../../redux/messages'
-import './style.scss'
+import React, { memo, useState, useRef } from 'react';
+import { useDispatch } from 'react-redux';
+import { Sun, Thunder, Warning } from '../../assets';
+import { livePrompt } from '../../redux/messages';
+import './style.scss';
+import { io } from "socket.io-client";
 
 const New = memo(() => {
-  const dispatch = useDispatch()
-  const [isRecording, setIsRecording] = useState(false)
-  const [audioData, setAudioData] = useState([])
-  const [isPanelOpen, setIsPanelOpen] = useState(false)
-  const [transcribedText, setTranscribedText] = useState([])
-  const audioContextRef = useRef(null)
-  const analyserRef = useRef(null)
-  const animationFrameRef = useRef(null)
+  const dispatch = useDispatch();
+  const [isRecording, setIsRecording] = useState(false);
+  const [audioData, setAudioData] = useState([]);
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const [transcribedText, setTranscribedText] = useState([]);
+  const audioContextRef = useRef(null);
+  const analyserRef = useRef(null);
+  const animationFrameRef = useRef(null);
+
+  const [socket, setSocket] = useState(null);
 
   const startRecording = () => {
-    setIsRecording(true)
-    audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)()
+    setIsRecording(true);
+    audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
     navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-      const source = audioContextRef.current.createMediaStreamSource(stream)
-      analyserRef.current = audioContextRef.current.createAnalyser()
-      source.connect(analyserRef.current)
-      visualizeAudio()
-      setIsPanelOpen(true)
-      console.log(source)
-    })
-  }
+      const source = audioContextRef.current.createMediaStreamSource(stream);
+      analyserRef.current = audioContextRef.current.createAnalyser();
+      source.connect(analyserRef.current);
+      visualizeAudio();
+      setIsPanelOpen(true);
+
+      // Initialize and connect socket
+      if (!socket) {
+        const newSocket = io("http://localhost:5001");
+        setSocket(newSocket);
+
+        newSocket.on("connect", () => {
+          console.log("Connected to the server!");
+          newSocket.emit("speech", { duration: 5 });
+        });
+
+        newSocket.on("transcription", (data) => {
+          console.log("User said:", data.text);
+          setTranscribedText((prev) => [...prev, `User: ${data.text}`]);
+        });
+
+        newSocket.on("llm_response", (data) => {
+          console.log("Llama Model Response:", data.response);
+          setTranscribedText((prev) => [...prev, `Bot: ${data.response}`]);
+        });
+
+        newSocket.on("audio", (data) => {
+          console.log("Playing:", data.audio_file);
+        });
+      }
+    });
+  };
 
   const stopRecording = () => {
-    setIsRecording(false)
-    cancelAnimationFrame(animationFrameRef.current)
-    audioContextRef.current.close()
-    // Simulate transcription for demonstration
-    setTranscribedText((prev) => [...prev, "This is a transcribed message."])
-    setIsPanelOpen(true)
-  }
+    setIsRecording(false);
+    cancelAnimationFrame(animationFrameRef.current);
+    audioContextRef.current.close();
+    setIsPanelOpen(true);
+  };
 
   const visualizeAudio = () => {
-    const bufferLength = analyserRef.current.frequencyBinCount
-    const dataArray = new Uint8Array(bufferLength)
+    const bufferLength = analyserRef.current.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
     const draw = () => {
-      analyserRef.current.getByteFrequencyData(dataArray)
-      setAudioData([...dataArray])
-      animationFrameRef.current = requestAnimationFrame(draw)
-    }
-    draw()
-  }
+      analyserRef.current.getByteFrequencyData(dataArray);
+      setAudioData([...dataArray]);
+      animationFrameRef.current = requestAnimationFrame(draw);
+    };
+    draw();
+  };
 
   return (
     <div className='New'>
@@ -53,33 +78,33 @@ const New = memo(() => {
         <h1 className='title currentColor'>Dialo</h1>
       </div>
       <div className='audio-sec'>
-      {!isRecording ? (
-        <button className="call-button" onClick={startRecording}>
-          📞
-        </button>
-      ) : (
-        <div className="audio-recorder-panel">
-          <div className="audio-graph">
-            {audioData.map((value, index) => (
-              <div
-                key={index}
-                style={{
-                  height: `${value / 2}px`,
-                  width: '2px',
-                  background: '#16a34a',
-                  display: 'inline-block',
-                  margin: '0 1px',
-                }}
-              ></div>
-            ))}
+        {!isRecording ? (
+          <button className="call-button" onClick={startRecording}>
+            📞
+          </button>
+        ) : (
+          <div className="audio-recorder-panel">
+            <div className="audio-graph">
+              {audioData.map((value, index) => (
+                <div
+                  key={index}
+                  style={{
+                    height: `${value / 2}px`,
+                    width: '2px',
+                    background: '#16a34a',
+                    display: 'inline-block',
+                    margin: '0 1px',
+                  }}
+                ></div>
+              ))}
+            </div>
+            <div className="audio-controls">
+              <button onClick={stopRecording} className="end">
+                End
+              </button>
+            </div>
           </div>
-          <div className="audio-controls">
-            <button onClick={stopRecording} className="end">
-              End
-            </button>
-          </div>
-        </div>
-      )}
+        )}
       </div>
       <div className="flex">
         <div className='inner'>
@@ -161,7 +186,7 @@ const New = memo(() => {
         )}
       </div>
     </div>
-  )
-})
+  );
+});
 
-export default New
+export default New;
