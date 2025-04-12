@@ -81,13 +81,13 @@ class SemanticSearch:
                 print(f"{r[0]}). {r[1]}")
 
 # Usage
-semantic_search = SemanticSearch('output.csv')
-#semantic_search.run_search('What is college name?')
-semantic_search.load_data()
-semantic_search.preprocess_data()
-semantic_search.load_model()
-semantic_search.load_embeddings()
-semantic_search.create_faiss_index()
-semantic_search.load_faiss_index()
-semantic_search.ask_repeated_questions()
+# semantic_search = SemanticSearch('output.csv')
+# #semantic_search.run_search('What is college name?')
+# semantic_search.load_data()
+# semantic_search.preprocess_data()
+# semantic_search.load_model()
+# semantic_search.load_embeddings()
+# semantic_search.create_faiss_index()
+# semantic_search.load_faiss_index()
+# semantic_search.ask_repeated_questions()
 

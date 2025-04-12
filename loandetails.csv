@@ -1,0 +1,13 @@
+Loan Type,Interest Rate,Loan Amount Range,Tenure,Processing Fee,Special Features
+Home Loan,7.25%,"$50,000 – $1,000,000","5 – 30 years",0.5%,"Tax benefits on interest, balance transfer available"
+Personal Loan,11.99%,"$1,000 – $50,000","1 – 5 years",2%,"Quick approval, no collateral needed"
+Auto Loan,9.50%,"$5,000 – $100,000","1 – 7 years",1.5%,"Available for new & used vehicles"
+Education Loan,10.75%,"$5,000 – $200,000","5 – 15 years",1%,"Moratorium during study period, tax benefit under Section 80E"
+Business Loan,12.50%,"$10,000 – $500,000","1 – 10 years",2%,"No collateral for up to $100,000, flexible repayment"
+Gold Loan,8.75%,"$500 – $50,000","6 months – 3 years",1%,"Instant disbursal against gold jewelry"
+Loan Against Property,10.00%,"$25,000 – $2,000,000","5 – 20 years",1.25%,"Lower interest rate, high loan value"
+Agriculture Loan,6.75%,"$1,000 – $250,000","1 – 7 years",0.5%,"Subsidized rates for farmers, seasonal repayment"
+Credit Line/Overdraft,13.50%,"$1,000 – $100,000","Revolving",1.5%,"Pay interest only on used amount"
+Medical Loan,10.50%,"$1,000 – $100,000","1 – 5 years",1.75%,"Fast approval for emergency medical expenses"
+Two-Wheeler Loan,9.25%,"$1,000 – $25,000","1 – 5 years",1%,"Low down payment, flexible tenure"
+Travel Loan,12.25%,"$1,000 – $20,000","6 months – 3 years",2%,"No collateral, instant processing for vacations"
