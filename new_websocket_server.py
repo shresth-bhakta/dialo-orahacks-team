@@ -10,9 +10,9 @@ import os
 import asyncio
 from edge_tts import Communicate
 import threading
-from faiss_check import SemanticSearch
 import re
 import pandas as pd
+
 
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*")
@@ -22,7 +22,10 @@ stt_model = whisper.load_model("medium")
 
 # Globals
 recording_buffer = []
+session_id = 1
 is_recording = False
+session_histories = {}  # Temporary memory per client session
+main_info = "NO"
 
 def extract_and_search_order(query, file_path):
     
@@ -101,7 +104,11 @@ def handle_start_recording():
 # SocketIO: Stop Recording
 @socketio.on("stop_recording")
 def handle_stop_recording():
-    global is_recording, recording_buffer
+    global is_recording, recording_buffer, main_info, session_histories, session_id
+
+    if session_id not in session_histories:
+        session_histories[session_id] = []
+
     if not is_recording:
         return emit("status", {"message": "Recording was not started."})
 
@@ -125,20 +132,31 @@ def handle_stop_recording():
     # Query LLM if transcription exists
     if transcription:
         new_prompt = extract_and_search_order(transcription,'Orders.csv')
-        if(new_prompt == "NO") : 
+        if(new_prompt != "NO") : 
+            main_info = new_prompt
+
+        if(main_info == "NO") : 
             query = f"You are customer care agent,and give the answer to '{transcription}'  and ask user to provide order id as he has not provided, so that you can help with their query. remove special symbols in answer like *,#,(,),etc in answer"
-            llm_response = ollama.chat(model="llama3.2", messages=[{"role": "user", "content": query}])
+            session_histories[session_id].append({"role": "user", "content": query})
+            # llm_response = ollama.chat(model="llama3.2", messages=[{"role": "user", "content": query}])
+            llm_response = ollama.chat(model="llama3.2", messages=session_histories[session_id])
             response_text = llm_response["message"]["content"]
+            session_histories[session_id].append({"role": "assistant", "content": response_text})
             emit("llm_response", {"response": response_text})
             asyncio.run(text_to_speech(response_text))
         else:
-            contextualized_query = f"You are customer care agent,and give the answer to '{transcription}' only using {new_prompt}, such that there can be an answer within these sentences? Find the related data and provide the answer with empathy.Do not give more extra information more than user asked .remove special symbols in answer like *,#,(,),etc in answer"
-            llm_response = ollama.chat(model="llama3.2", messages=[{"role": "user", "content": contextualized_query}])
+            contextualized_query = f"You are customer care agent,and give the answer to '{transcription}' only using {main_info}, such that there can be an answer within these sentences? Find the related data and provide the answer with empathy.Do not give more extra information more than user asked .remove special symbols in answer like *,#,(,),etc in answer"
+            session_histories[session_id].append({"role": "user", "content": contextualized_query})
+            # llm_response = ollama.chat(model="llama3.2", messages=[{"role": "user", "content": contextualized_query}])
+            llm_response = ollama.chat(model="llama3.2", messages=session_histories[session_id])
             response_text = llm_response["message"]["content"]
+            session_histories[session_id].append({"role": "assistant", "content": response_text})
             # response = ollama.chat(model=self.llm_model, messages=[{"role": "user", "content": prompt}])
             # response_text = response["message"]["content"]
             emit("llm_response", {"response": response_text})
             asyncio.run(text_to_speech(response_text))
+
+        
     
 
           
