@@ -18,7 +18,7 @@ app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 # Load Whisper model
-stt_model = whisper.load_model("medium")
+stt_model = whisper.load_model("turbo")
 
 # Globals
 recording_buffer = []
@@ -179,7 +179,7 @@ async def text_to_speech(text):
 
 # Start server
 if __name__ == "__main__":
-    socketio.run(app, host="0.0.0.0", port=5001, debug=True)
+    socketio.run(app, host="0.0.0.0", port=5002, debug=True)
 
 
 

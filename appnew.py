@@ -14,8 +14,12 @@ def get_audio():
 
 # AI Marketing Bot Route
 @app.route("/ai-customercare-bot")
-def ai_marketing_bot():
+def ai_customercare_bot():
     return render_template("bot1.html")  # The page.html you've created
 
+
+@app.route("/ai-marketing-bot")
+def ai_marketing_bot():
+    return render_template("bot2.html")
 if __name__ == "__main__":
     app.run(port=3000, debug=True)
