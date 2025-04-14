@@ -18,7 +18,7 @@ app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 # Load Whisper model
-stt_model = whisper.load_model("medium.en")
+stt_model = whisper.load_model("turbo")
 
 # Globals
 recording_buffer = []
