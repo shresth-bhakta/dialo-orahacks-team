@@ -23,6 +23,23 @@ socket.on("status", (data) => {
     console.log("Status:", data.message);
 });
 
+// socket.on("audio", (data) => {
+//     const audio = new Audio(data.audio_file);
+//     audio.play().catch(error => {
+//         console.error("Audio playback failed:", error);
+//     });
+// });
+
+socket.on("audio", (data) => {
+    // Add timestamp to bypass browser cache
+    const audioUrl = `${data.audio_file}?t=${Date.now()}`;
+    const audio = new Audio(audioUrl);
+    audio.play().catch(error => {
+        console.error("Audio playback failed:", error);
+    });
+});
+
+
 socket.on("transcription", (data) => {
     const msg = document.createElement("div");
     msg.className = "user-msg";
