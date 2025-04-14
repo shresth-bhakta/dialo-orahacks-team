@@ -16,7 +16,7 @@ app = Flask(__name__)
 # Serve the main page
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("new.html")
 
 # Serve the generated speech file
 @app.route("/output.mp3")
