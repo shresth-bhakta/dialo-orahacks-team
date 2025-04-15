@@ -73,6 +73,39 @@ def background_recording():
 
     print("🛑 Recording stopped.")
 
+# def is_silent(audio_chunk, threshold=0.01):
+#     return np.max(np.abs(audio_chunk)) < threshold
+
+# def background_recording():
+#     global is_recording, recording_buffer
+#     print("🎙️ Recording started with silence detection...")
+
+#     samplerate = 16000
+#     recording_buffer = []
+#     silence_duration = 0
+#     silence_threshold = 1  # seconds
+#     chunk_duration = 0.5  # seconds
+
+#     while is_recording:
+#         frame = sd.rec(int(samplerate * chunk_duration), samplerate=samplerate, channels=1, dtype="float32")
+#         sd.wait()
+#         frame_flat = frame.flatten()
+#         recording_buffer.extend(frame_flat)
+
+#         if is_silent(frame_flat):
+#             silence_duration += chunk_duration
+#         else:
+#             silence_duration = 0  # voice detected
+
+#         if silence_duration >= silence_threshold:
+#             print("🛑 Silence detected. Triggering transcription...")
+#             is_recording = False
+#             socketio.emit("silence_triggered")  # frontend will call stop_recording
+#             break
+
+#     print("🛑 Recording thread exited.")
+
+
 # Normalize and convert to float32
 def normalize_and_convert(audio):
     audio_np = np.array(audio, dtype=np.float32)
@@ -136,7 +169,7 @@ def handle_stop_recording():
             main_info = new_prompt
 
         if(main_info == "NO") : 
-            query = f"You are customer care agent,and give the answer to '{transcription}'  and ask user to provide order id as he has not provided, so that you can help with their query. remove special symbols in answer like *,#,(,),etc in answer"
+            query = f"You are customer care agent named Lina,and give the answer to '{transcription}'  and ask user to provide order id as he has not provided, so that you can help with their query. remove special symbols in answer like *,#,(,),etc in answer"
             session_histories[session_id].append({"role": "user", "content": query})
             # llm_response = ollama.chat(model="llama3.2", messages=[{"role": "user", "content": query}])
             llm_response = ollama.chat(model="llama3.2", messages=session_histories[session_id])
@@ -145,7 +178,7 @@ def handle_stop_recording():
             emit("llm_response", {"response": response_text})
             asyncio.run(text_to_speech(response_text))
         else:
-            contextualized_query = f"You are customer care agent,and give the answer to '{transcription}' only using {main_info}, such that there can be an answer within these sentences? Find the related data and provide the answer with empathy.Do not give more extra information more than user asked .remove special symbols in answer like *,#,(,),etc in answer"
+            contextualized_query = f"You are customer care agent named Lina,and give the answer to '{transcription}' only using {main_info}, such that there can be an answer within these sentences? Find the related data and provide the answer with empathy.Do not give more extra information more than user asked .remove special symbols in answer like *,#,(,),etc in answer. Respond to the user by calling their name from the data but not repeatedly."
             session_histories[session_id].append({"role": "user", "content": contextualized_query})
             # llm_response = ollama.chat(model="llama3.2", messages=[{"role": "user", "content": contextualized_query}])
             llm_response = ollama.chat(model="llama3.2", messages=session_histories[session_id])
